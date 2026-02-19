@@ -1,0 +1,3366 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SeerPlay Intelligence Hub</title>
+    <meta name="description" content="Oracle 26ai-powered iGaming Intelligence Platform by SeerPlay">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            /* DEEP MIDNIGHT VOID */
+            --bg-primary: #020408;
+            --bg-secondary: #0a0f18;
+
+            /* FROSTED GLASS & UI ACCENTS */
+            --bg-card: rgba(10, 15, 25, 0.65);
+            --bg-glass: rgba(0, 240, 255, 0.03);
+            --border-glass: rgba(0, 240, 255, 0.15);
+
+            /* TYPOGRAPHY */
+            --text-primary: #e0e6ed;
+            --text-secondary: #94a3b8;
+            --text-muted: #475569;
+
+            /* NEON ACCENTS (CYBERPUNK / TACTICAL) */
+            --accent-cyan: #00f0ff;
+            /* Primary Data / Action */
+            --accent-magenta: #ff003c;
+            /* Alert / Critical */
+            --accent-blue: #2d6cdf;
+            /* Corporate / Structural */
+            --accent-purple: #bd00ff;
+            /* Secondary Logic */
+            --accent-emerald: #0aff99;
+            /* Success / Safe */
+            --accent-amber: #ffcc00;
+            /* Warning / Caution */
+
+            /* GLOWS */
+            --glow-cyan: rgba(0, 240, 255, 0.25);
+            --glow-magenta: rgba(255, 0, 60, 0.25);
+            --glow-blue: rgba(45, 108, 223, 0.25);
+
+            /* GRADIENTS */
+            --gradient-hero: linear-gradient(135deg, #050a14 0%, #020408 60%, #0a0514 100%);
+
+            /* UTILS */
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated background mesh */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 15% 15%, rgba(45, 108, 223, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(189, 0, 255, 0.04) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(0, 240, 255, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ---- HEADER ---- */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(24px);
+            background: rgba(2, 4, 8, 0.85);
+            border-bottom: 1px solid var(--border-glass);
+            padding: 0 2rem;
+        }
+
+        .header-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            font-size: 1.2rem;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .logo span {
+            color: var(--accent-blue);
+        }
+
+        .header-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-emerald);
+            box-shadow: 0 0 10px var(--accent-emerald);
+            animation: pulse-dot 2.5s infinite;
+        }
+
+        @keyframes pulse-dot {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        /* ---- MAIN LAYOUT ---- */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ---- STATS BAR ---- */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-sm);
+            padding: 1.2rem;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transition: var(--transition);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .stat-card:hover {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--text-primary), var(--accent-blue));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* ---- SECTION TITLES ---- */
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .section-badge {
+            font-size: 0.65rem;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-vector {
+            background: var(--glow-blue);
+            color: var(--accent-blue);
+        }
+
+        .badge-whatif {
+            background: var(--glow-purple);
+            color: var(--accent-purple);
+        }
+
+        .badge-duality {
+            background: var(--glow-emerald);
+            color: var(--accent-emerald);
+        }
+
+        .badge-graph {
+            background: rgba(244, 63, 94, 0.15);
+            color: var(--accent-rose);
+        }
+
+        /* ---- PANELS ---- */
+        .panels {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+        }
+
+        .panel-vector::before {
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
+        }
+
+        .panel-whatif::before {
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-rose));
+        }
+
+        .panel-duality::before {
+            background: linear-gradient(90deg, var(--accent-emerald), var(--accent-amber));
+        }
+
+        .panel-graph::before {
+            background: linear-gradient(90deg, var(--accent-rose), var(--accent-amber), var(--accent-rose));
+        }
+
+        .panel:hover {
+            border-color: var(--border-glass);
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .panel-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .oracle-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--accent-amber);
+            background: rgba(245, 158, 11, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-bottom: 0.75rem;
+        }
+
+        /* ---- FORMS ---- */
+        .input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .input-group input,
+        .input-group select {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
+        .input-group select option {
+            background: var(--bg-secondary);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .btn-blue {
+            background: linear-gradient(135deg, var(--accent-blue), #2563eb);
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-blue:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-purple {
+            background: linear-gradient(135deg, var(--accent-purple), #7c3aed);
+            color: white;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-purple:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-emerald {
+            background: linear-gradient(135deg, var(--accent-emerald), #059669);
+            color: white;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-emerald:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        /* ---- RESULTS ---- */
+        .results-area {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            min-height: 120px;
+            max-height: 350px;
+            overflow-y: auto;
+            font-size: 0.82rem;
+            line-height: 1.6;
+        }
+
+        .results-area::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .results-area::-webkit-scrollbar-thumb {
+            background: var(--border-glass);
+            border-radius: 3px;
+        }
+
+        .results-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .result-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            transition: var(--transition);
+        }
+
+        .result-row:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .result-player {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .result-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .persona-badge {
+            font-size: 0.68rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .persona-VIP {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent-amber);
+        }
+
+        .persona-Casual {
+            background: rgba(6, 182, 212, 0.15);
+            color: var(--accent-cyan);
+        }
+
+        .persona-High-Churn {
+            background: rgba(244, 63, 94, 0.15);
+            color: var(--accent-rose);
+        }
+
+        /* ---- WHAT-IF RESULT ---- */
+        .whatif-result {
+            display: grid;
+            gap: 12px;
+        }
+
+        .whatif-card {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            border-left: 3px solid;
+        }
+
+        .whatif-card.baseline {
+            border-color: var(--text-muted);
+        }
+
+        .whatif-card.intervention {
+            border-color: var(--accent-purple);
+        }
+
+        .whatif-card.delta {
+            border-color: var(--accent-emerald);
+        }
+
+        .whatif-label {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .whatif-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        /* ---- GRAPH TABS ---- */
+        .graph-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: var(--radius-sm);
+            padding: 4px;
+        }
+
+        .graph-tab {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            color: var(--text-muted);
+            font-family: inherit;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .graph-tab.active {
+            background: rgba(244, 63, 94, 0.15);
+            color: var(--accent-rose);
+        }
+
+        .graph-tab:hover:not(.active) {
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .graph-content {
+            display: none;
+        }
+
+        .graph-content.active {
+            display: block;
+        }
+
+        .risk-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .risk-critical {
+            background: rgba(244, 63, 94, 0.2);
+            color: var(--accent-rose);
+        }
+
+        .risk-high {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--accent-amber);
+        }
+
+        .risk-medium {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--accent-blue);
+        }
+
+        .risk-low {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--accent-emerald);
+        }
+
+        .link-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            margin-bottom: 3px;
+            font-size: 0.8rem;
+        }
+
+        .link-row:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .link-icon {
+            font-size: 1rem;
+        }
+
+        /* ---- GRAPH CANVAS ---- */
+        .graph-canvas {
+            width: 100%;
+            height: 400px;
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-sm);
+            background: rgba(0, 0, 0, 0.25);
+            margin-bottom: 0.75rem;
+            position: relative;
+        }
+
+        .graph-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            padding: 8px 12px;
+            margin-bottom: 0.75rem;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        .graph-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .legend-square {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            display: inline-block;
+        }
+
+        .legend-diamond {
+            width: 10px;
+            height: 10px;
+            transform: rotate(45deg);
+            display: inline-block;
+        }
+
+        .legend-line {
+            width: 20px;
+            height: 2px;
+            display: inline-block;
+        }
+
+
+        .whatif-rec {
+            padding: 10px 14px;
+            background: rgba(16, 185, 129, 0.08);
+            border-radius: 8px;
+            font-size: 0.82rem;
+            color: var(--accent-emerald);
+        }
+
+        /* ---- ASK PANEL ---- */
+        .ask-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            backdrop-filter: blur(12px);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ask-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-amber), var(--accent-rose), var(--accent-purple));
+        }
+
+        .sql-block {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-glass);
+            border-radius: 8px;
+            padding: 12px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.78rem;
+            color: var(--accent-cyan);
+            margin: 10px 0;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+            margin-top: 8px;
+        }
+
+        .result-table th {
+            text-align: left;
+            padding: 6px 10px;
+            border-bottom: 1px solid var(--border-glass);
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+        }
+
+        .result-table td {
+            padding: 6px 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            color: var(--text-secondary);
+        }
+
+        /* ---- FOOTER ---- */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            border-top: 1px solid var(--border-glass);
+        }
+
+        .footer a {
+            color: var(--accent-blue);
+            text-decoration: none;
+        }
+
+        /* ---- SPINNER ---- */
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ---- RESPONSIVE ---- */
+        @media (max-width: 900px) {
+            .panels {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* ---- SIMULATION FORGE STYLES ---- */
+        .forge-container {
+            display: none;
+            /* Hidden by default */
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .forge-grid-bg {
+            background-image:
+                linear-gradient(rgba(0, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius);
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5) inset;
+        }
+
+        .forge-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--accent-cyan);
+            padding-bottom: 1rem;
+        }
+
+        .forge-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 15px var(--accent-cyan);
+            border-left: 4px solid var(--accent-cyan);
+            padding-left: 12px;
+        }
+
+        .forge-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .control-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .control-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 5px rgba(0, 240, 255, 0.4);
+        }
+
+        .range-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-glass);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--accent-cyan);
+            border-radius: 2px;
+            /* Square/Tech look */
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--accent-cyan);
+            border: 2px solid #fff;
+            transform: rotate(45deg);
+            /* Diamond shape thumb */
+            margin-top: -8px;
+            /* Alignment adjustment if needed, but height is small */
+        }
+
+        /* Fix for margin-top on thumb */
+        .range-slider::-webkit-slider-thumb {
+            margin-top: 0;
+        }
+
+        .run-sim-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-sm);
+            color: #020408;
+            /* Dark text on bright button */
+            font-weight: 800;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+            transition: all 0.3s;
+            margin-top: 1rem;
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+        }
+
+        .run-sim-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.5);
+            background: linear-gradient(90deg, #fff, var(--accent-cyan));
+        }
+
+        .sim-results {
+            margin-top: 2rem;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+        }
+
+        .hologram-chart {
+            height: 300px;
+            width: 100%;
+            /* Ensure full width */
+            border-bottom: 1px solid var(--border-glass);
+            position: relative;
+        }
+
+        .result-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .metric-box {
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: var(--radius-sm);
+        }
+
+        .metric-val {
+            font-size: 1.8rem;
+            font-weight: 800;
+            text-shadow: 0 0 10px currentColor;
+        }
+
+
+        .nav-dock {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(2, 4, 8, 0.85);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border-glass);
+            padding: 12px 24px;
+            border-radius: 40px;
+            display: flex;
+            gap: 24px;
+            z-index: 9999;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.6), 0 0 10px rgba(0, 240, 255, 0.1);
+        }
+
+        /* ---- SPECTROSCOPE VIEW ---- */
+        .spectro-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border-glass);
+        }
+
+        .spectro-profile-lockup {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .hexagon-wrapper {
+            width: 80px;
+            height: 90px;
+            position: relative;
+            filter: drop-shadow(0 0 15px var(--glow-purple));
+        }
+
+        .hexagon-image {
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-secondary);
+            background-image: url('https://i.pravatar.cc/150?u=SeerPlayVIP');
+            background-size: cover;
+            background-position: center;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            border: 2px solid var(--accent-purple);
+        }
+
+        .online-indicator {
+            position: absolute;
+            bottom: 5px;
+            right: 0;
+            width: 16px;
+            height: 16px;
+            background: var(--accent-emerald);
+            border: 2px solid var(--bg-primary);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-emerald);
+        }
+
+        .profile-details h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 0;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, #fff, var(--accent-cyan));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .profile-meta {
+            display: flex;
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        .tier-badge {
+            background: linear-gradient(90deg, #4c1d95, #6d28d9);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            box-shadow: 0 4px 10px rgba(109, 40, 217, 0.3);
+        }
+
+        .id-badge {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-family: monospace;
+        }
+
+        .spectro-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .dossier-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .dossier-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--border-glass);
+        }
+
+        .financial-card::before {
+            background: var(--accent-blue);
+        }
+
+        .intel-card::before {
+            background: var(--accent-emerald);
+        }
+
+        .session-history-card::before {
+            background: var(--accent-purple);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-glass);
+            padding-bottom: 0.8rem;
+        }
+
+        .card-header h3 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            margin: 0;
+        }
+
+        .trend-icon {
+            color: var(--accent-emerald);
+            font-size: 1.2rem;
+        }
+
+        .fin-split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .fin-metric label {
+            display: block;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .value-large {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -1px;
+        }
+
+        .sub-metric {
+            font-size: 0.8rem;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        .sub-metric.increase {
+            color: var(--accent-emerald);
+        }
+
+        .ratio-bar {
+            height: 6px;
+            background: #333;
+            border-radius: 3px;
+            margin: 10px 0;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .ratio-win {
+            background: var(--accent-emerald);
+            height: 100%;
+        }
+
+        .ratio-loss {
+            background: var(--accent-rose);
+            height: 100%;
+        }
+
+        .ratio-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .staff-notes-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-size: 0.75rem;
+            color: var(--accent-cyan);
+            font-weight: 700;
+        }
+
+        .notes-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .note-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            padding: 10px;
+            border-left: 2px solid var(--accent-cyan);
+        }
+
+        .note-item p {
+            margin: 0 0 6px 0;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-style: italic;
+            line-height: 1.4;
+        }
+
+        .note-meta {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .spectro-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .spectro-table th {
+            text-align: left;
+            padding: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.7rem;
+            border-bottom: 1px solid var(--border-glass);
+        }
+
+        .spectro-table td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            color: var(--text-secondary);
+        }
+
+        .spectro-footer {
+            margin-top: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: 40px;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            backdrop-filter: blur(12px);
+        }
+
+        .retention-module {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .retention-module label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-weight: 700;
+            width: 80px;
+            line-height: 1.2;
+        }
+
+        .health-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .health-bar-track {
+            width: 150px;
+            height: 8px;
+            background: #333;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .health-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-rose), var(--accent-emerald));
+            border-radius: 4px;
+        }
+
+        .health-score {
+            font-weight: 700;
+            color: #fff;
+            font-size: 1.1rem;
+        }
+
+        .health-status {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--accent-emerald);
+            background: rgba(16, 185, 129, 0.1);
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-action {
+            border: none;
+            padding: 10px 18px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-freeze {
+            background: rgba(255, 0, 60, 0.15);
+            color: var(--accent-magenta);
+            border: 1px solid rgba(255, 0, 60, 0.4);
+        }
+
+        .btn-freeze:hover {
+            background: var(--accent-magenta);
+            color: white;
+            box-shadow: 0 0 20px rgba(255, 0, 60, 0.6);
+        }
+
+        .btn-vip {
+            background: linear-gradient(135deg, var(--bg-secondary), #1a1f2e);
+            color: var(--text-primary);
+            border: 1px solid var(--border-glass);
+        }
+
+        .btn-vip:hover {
+            border-color: var(--accent-amber);
+            color: var(--accent-amber);
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.2);
+        }
+
+        .btn-message {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-glass);
+        }
+
+        .btn-message:hover {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+        }
+
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            padding: 5px 10px;
+            border-radius: 10px;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            color: var(--accent-cyan);
+            background: rgba(6, 182, 212, 0.1);
+        }
+
+
+        .nav-icon {
+            font-size: 1.2rem;
+            margin-bottom: 2px;
+        }
+
+        /* Spectro Nav Specific */
+        .nav-item.spectro-nav:hover {
+            color: var(--accent-purple);
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .nav-item.spectro-nav.active {
+            color: var(--accent-purple);
+            background: rgba(139, 92, 246, 0.15);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+        }
+
+
+
+        @keyframes scanline {
+            0% {
+                top: 0%;
+            }
+
+            100% {
+                top: 100%;
+            }
+        }
+
+        .scan-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, transparent, rgba(6, 182, 212, 0.1), transparent);
+            height: 20px;
+            width: 100%;
+            animation: scanline 3s linear infinite;
+            pointer-events: none;
+            display: none;
+        }
+
+        /* ---- INTERVENTION NEXUS STYLES ---- */
+        .nexus-container {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+            padding-bottom: 80px;
+            /* Space for nav dock */
+        }
+
+        .nexus-header {
+            border-bottom: 2px solid var(--accent-rose);
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .protocol-card {
+            background: rgba(10, 14, 26, 0.8);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .protocol-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--text-muted);
+            transition: background 0.3s;
+        }
+
+        .protocol-card.active {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.15);
+        }
+
+        .protocol-card.active::before {
+            background: var(--accent-cyan);
+        }
+
+        .protocol-icon-box {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 1.5rem;
+            color: var(--text-muted);
+            transition: all 0.3s;
+        }
+
+        .protocol-card.active .protocol-icon-box {
+            background: rgba(6, 182, 212, 0.2);
+            color: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(6, 182, 212, 0.3);
+        }
+
+        .switch-toggle {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        .switch-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #333;
+            transition: .4s;
+            border-radius: 4px;
+            border: 1px solid #555;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            bottom: 3px;
+            background-color: #888;
+            transition: .4s;
+            border-radius: 2px;
+        }
+
+        input:checked+.slider {
+            background-color: rgba(6, 182, 212, 0.2);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(6, 182, 212, 0.4);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(30px);
+            background-color: var(--accent-cyan);
+            box-shadow: 0 0 8px var(--accent-cyan);
+        }
+
+        .danger-zone-title {
+            color: var(--accent-rose);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 3rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--accent-rose);
+            display: inline-block;
+            padding: 4px 12px;
+            font-size: 0.8rem;
+            background: rgba(244, 63, 94, 0.1);
+        }
+
+        .hazard-stripe {
+            background: repeating-linear-gradient(45deg,
+                    rgba(244, 63, 94, 0.1),
+                    rgba(244, 63, 94, 0.1) 10px,
+                    rgba(0, 0, 0, 0.2) 10px,
+                    rgba(0, 0, 0, 0.2) 20px);
+        }
+
+        /* Slide to Unlock */
+        .slide-container {
+            position: relative;
+            width: 100%;
+            height: 60px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--accent-rose);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .slide-track {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--accent-rose);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .slide-thumb {
+            position: absolute;
+            top: 4px;
+            bottom: 4px;
+            left: 4px;
+            width: 80px;
+            background: var(--accent-rose);
+            border-radius: 2px;
+            cursor: grab;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #fff;
+            z-index: 2;
+            transition: background 0.2s;
+            box-shadow: 0 0 15px rgba(244, 63, 94, 0.5);
+        }
+
+        .slide-thumb:active {
+            cursor: grabbing;
+            background: #e11d48;
+        }
+
+        .search-box-sm {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            padding: 6px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 220px;
+            transition: all 0.2s;
+        }
+
+        .search-box-sm:focus-within {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.2);
+        }
+
+        .search-box-sm input {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 0.8rem;
+            width: 100%;
+            outline: none;
+        }
+
+        .search-box-sm .icon {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-inner">
+            <div class="logo">
+                <div class="logo-icon">⚡</div>
+                <span>SeerPlay</span> Intelligence Hub
+            </div>
+            <div class="header-status">
+                <div class="status-dot" id="statusDot"></div>
+                <span id="statusText">Connecting...</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <!-- COMMAND DECK VIEW (Existing Dashboard) -->
+        <div id="viewCommandDeck">
+
+            <!-- STATS BAR -->
+            <div class="stats-bar" id="statsBar">
+                <div class="stat-card">
+                    <div class="stat-label">Players</div>
+                    <div class="stat-value" id="statPlayers">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Sessions</div>
+                    <div class="stat-value" id="statSessions">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Events</div>
+                    <div class="stat-value" id="statEvents">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Bets</div>
+                    <div class="stat-value" id="statBets">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Wins</div>
+                    <div class="stat-value" id="statWins">—</div>
+                </div>
+            </div>
+
+            <!-- THREE USE CASE PANELS -->
+            <div class="panels">
+
+                <!-- PANEL A: AI VECTOR SEARCH -->
+                <div class="panel panel-vector">
+                    <div class="section-title">
+                        🎯 Player Behavior Lookalike
+                        <span class="section-badge badge-vector">Use Case A</span>
+                    </div>
+                    <div class="oracle-tag">⚙ Oracle AI Vector Search · COSINE</div>
+                    <p class="panel-desc">
+                        Find players exhibiting betting patterns similar to known archetypes.
+                        Converts session behavior into vectors and searches using Cosine Similarity.
+                    </p>
+                    <div class="input-group">
+                        <select id="vsPersona">
+                            <option value="VIP">VIP Centroid</option>
+                            <option value="Casual">Casual Centroid</option>
+                            <option value="High-Churn">High-Churn Centroid</option>
+                        </select>
+                        <input type="number" id="vsLimit" value="5" min="1" max="50" style="max-width:80px"
+                            placeholder="Limit">
+                        <button class="btn btn-blue" onclick="runVectorSearch()">Search</button>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="vsPlayerId" placeholder="Or enter Player ID (e.g. SPR-0001)">
+                        <button class="btn btn-blue" onclick="runVectorSearchById()">🔍</button>
+                    </div>
+                    <div class="results-area" id="vsResults">
+                        <div class="results-placeholder">Results will appear here</div>
+                    </div>
+                </div>
+
+                <!-- PANEL B: WHAT-IF -->
+                <div class="panel panel-whatif">
+                    <div class="section-title">
+                        🛡️ Responsible Gaming What-If
+                        <span class="section-badge badge-whatif">Use Case B</span>
+                    </div>
+                    <div class="oracle-tag">⚙ OML Regression · Select AI</div>
+                    <p class="panel-desc">
+                        Predict the impact of interventions on Player Lifetime Value.
+                        "What if we implement a mandatory break for at-risk players?"
+                    </p>
+                    <div class="input-group">
+                        <select id="wiPersona">
+                            <option value="">All Players</option>
+                            <option value="VIP">VIP</option>
+                            <option value="Casual">Casual</option>
+                            <option value="High-Churn">High-Churn</option>
+                        </select>
+                        <input type="number" id="wiBreak" value="10" min="1" max="60" style="max-width:100px"
+                            placeholder="Break (min)">
+                        <button class="btn btn-purple" onclick="runWhatIf()">Predict</button>
+                    </div>
+                    <div class="results-area" id="wiResults">
+                        <div class="results-placeholder">Configure and predict</div>
+                    </div>
+                </div>
+
+                <!-- PANEL C: JSON DUALITY -->
+                <div class="panel panel-duality">
+                    <div class="section-title">
+                        📡 Real-time Session Tracker
+                        <span class="section-badge badge-duality">Use Case C</span>
+                    </div>
+                    <div class="oracle-tag">⚙ JSON-Relational Duality Views</div>
+                    <p class="panel-desc">
+                        Track every spin and bet in real-time. Developers write JSON;
+                        Oracle stores it relationally with sub-millisecond ACID updates.
+                    </p>
+                    <div class="input-group">
+                        <input type="text" id="dtPlayerId" placeholder="Player ID (e.g. SPR-0042)" value="SPR-0042">
+                        <button class="btn btn-emerald" onclick="loadSessions()">Load Sessions</button>
+                    </div>
+                    <div class="results-area" id="dtResults">
+                        <div class="results-placeholder">Enter a Player ID to view sessions</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL D: PROPERTY GRAPH (full width) -->
+            <div class="panel panel-graph" style="margin-bottom:2rem">
+                <div class="section-title">
+                    🕸️ Graph Intelligence
+                    <span class="section-badge badge-graph">Use Case D</span>
+                </div>
+                <div class="oracle-tag">⚙ Oracle Property Graph · SQL/PGQ</div>
+                <p class="panel-desc">
+                    Uncover hidden relationships using Oracle's Property Graph engine. Detect fraud rings,
+                    map player influence networks, and assess risk contagion — all with SQL/PGQ queries.
+                </p>
+
+                <div class="graph-tabs">
+                    <button class="graph-tab active" onclick="switchGraphTab('fraud')">🔍 Fraud Scan</button>
+                    <button class="graph-tab" onclick="switchGraphTab('influence')">🌐 Influence Network</button>
+                    <button class="graph-tab" onclick="switchGraphTab('risk')">⚠️ Risk Propagation</button>
+                </div>
+
+                <!-- Fraud Scan Tab -->
+                <div class="graph-content active" id="graphFraud">
+                    <div class="input-group">
+                        <input type="text" id="gfPlayerId" placeholder="Player ID (e.g. SPR-0300 for fraud cluster)"
+                            value="SPR-0300">
+                        <button class="btn"
+                            style="background:linear-gradient(135deg,var(--accent-magenta),#be123c);color:white;box-shadow:0 0 12px var(--glow-magenta)"
+                            onclick="runFraudScan()">Scan</button>
+                    </div>
+                    <div class="graph-legend" id="gfLegend" style="display:none">
+                        <div class="graph-legend-item"><span class="legend-dot"
+                                style="background:var(--accent-magenta)"></span>
+                            Target
+                            Player</div>
+                        <div class="graph-legend-item"><span class="legend-dot"
+                                style="background:var(--accent-blue)"></span>
+                            Linked
+                            Player</div>
+                        <div class="graph-legend-item"><span class="legend-square"
+                                style="background:var(--text-muted)"></span>
+                            Device
+                        </div>
+                        <div class="graph-legend-item"><span class="legend-diamond"
+                                style="background:var(--accent-cyan)"></span>
+                            IP
+                            Address</div>
+                        <div class="graph-legend-item"><span class="legend-line"
+                                style="background:var(--accent-emerald)"></span> Uses
+                            Device</div>
+                        <div class="graph-legend-item"><span class="legend-line"
+                                style="background:var(--accent-amber)"></span> Logs
+                            from IP</div>
+                    </div>
+                    <div class="graph-canvas" id="gfCanvas" style="display:none"></div>
+                    <div class="results-area" id="gfResults">
+                        <div class="results-placeholder">Enter a Player ID to scan for shared devices & IPs</div>
+                    </div>
+                </div>
+
+                <!-- Influence Network Tab -->
+                <div class="graph-content" id="graphInfluence">
+                    <div class="input-group">
+                        <input type="text" id="giPlayerId" placeholder="Player ID (e.g. SPR-0810)" value="SPR-0810">
+                        <button class="btn"
+                            style="background:linear-gradient(135deg,var(--accent-cyan),#0891b2);color:white;box-shadow:0 0 12px var(--glow-cyan)"
+                            onclick="runInfluence()">Map Network</button>
+                    </div>
+                    <div class="graph-legend" id="giLegend" style="display:none">
+                        <div class="graph-legend-item"><span class="legend-dot"
+                                style="background:var(--accent-cyan)"></span>
+                            Target
+                            Player</div>
+                        <div class="graph-legend-item"><span class="legend-dot"
+                                style="background:var(--accent-purple)"></span>
+                            Referred
+                            By</div>
+                        <div class="graph-legend-item"><span class="legend-dot"
+                                style="background:var(--accent-blue)"></span>
+                            Direct
+                            Referral</div>
+                        <div class="graph-legend-item"><span class="legend-dot"
+                                style="background:var(--text-muted)"></span>
+                            Indirect
+                            Referral</div>
+                        <div class="graph-legend-item"><span class="legend-line"
+                                style="background:var(--accent-emerald)"></span>
+                            Referred
+                        </div>
+                    </div>
+                    <div class="graph-canvas" id="giCanvas" style="display:none"></div>
+                    <div class="results-area" id="giResults">
+                        <div class="results-placeholder">Enter a Player ID to map their referral network</div>
+                    </div>
+                </div>
+
+                <!-- Risk Propagation Tab -->
+                <div class="graph-content" id="graphRisk">
+                    <div class="input-group">
+                        <input type="text" id="grPlayerId" placeholder="Player ID (e.g. SPR-0300)" value="SPR-0300">
+                        <button class="btn"
+                            style="background:linear-gradient(135deg,var(--accent-amber),#d97706);color:white;box-shadow:0 0 12px rgba(245,158,11,0.3)"
+                            onclick="runRiskPropagation()">Assess Risk</button>
+                    </div>
+                    <div class="graph-legend" id="grLegend" style="display:none">
+                        <div class="graph-legend-item"><span class="legend-dot"
+                                style="background:var(--accent-amber)"></span>
+                            Target
+                            Player</div>
+                        <div class="graph-legend-item"><span class="legend-dot"
+                                style="background:var(--accent-magenta)"></span>
+                            At-Risk
+                            Neighbor</div>
+                        <div class="graph-legend-item"><span class="legend-dot"
+                                style="background:var(--accent-emerald)"></span> Safe
+                            Neighbor</div>
+                        <div class="graph-legend-item"><span class="legend-square"
+                                style="background:var(--text-muted)"></span>
+                            Device
+                        </div>
+                        <div class="graph-legend-item"><span class="legend-diamond"
+                                style="background:var(--accent-cyan)"></span>
+                            IP
+                            Address</div>
+                    </div>
+                    <div class="graph-canvas" id="grCanvas" style="display:none"></div>
+                    <div class="results-area" id="grResults">
+                        <div class="results-placeholder">Enter a Player ID to check risk contagion from nearby at-risk
+                            accounts</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ASK PANEL (Text-to-SQL) -->
+            <div class="ask-panel">
+                <div class="section-title">
+                    🧠 Ask the Hub
+                    <span class="section-badge"
+                        style="background:rgba(245,158,11,0.1);color:var(--accent-amber);">Text-to-SQL</span>
+                </div>
+                <div class="oracle-tag">⚙ Ollama LLM · Natural Language → SQL</div>
+                <p class="panel-desc">
+                    Ask a question in plain English. The LLM generates SQL, Oracle executes it, and you get results.
+                </p>
+                <div class="input-group">
+                    <input type="text" id="askQuestion"
+                        placeholder='e.g. "How many VIP players have an LTV above 10000?"' style="flex:3">
+                    <button class="btn btn-blue" onclick="askHub()"
+                        style="background:linear-gradient(135deg,var(--accent-amber),#d97706);box-shadow:0 0 10px rgba(245,158,11,0.3)">Ask</button>
+                </div>
+                <div id="askSql" class="sql-block" style="display:none;"></div>
+                <div class="results-area" id="askResults" style="display:none;"></div>
+            </div>
+
+        </div>
+        <!-- END COMMAND DECK VIEW -->
+
+        <!-- SIMULATION FORGE VIEW -->
+        <div id="viewSimulationForge" class="forge-container">
+            <div class="forge-grid-bg">
+                <div class="scan-overlay" id="simScan"></div>
+                <div class="forge-header">
+                    <div class="forge-title">Simulation <span style="color:var(--accent-cyan)">Forge</span></div>
+                    <div style="font-size:0.8rem; color:var(--accent-emerald)">● SYSTEM_READY</div>
+                </div>
+
+                <div class="forge-controls">
+                    <!-- Left Col: Parameters -->
+                    <div>
+                        <div class="section-title">Target Scenario</div>
+                        <div
+                            style="background:rgba(255,255,255,0.05); padding:10px; border-radius:8px; margin-bottom:2rem; border-left:3px solid var(--accent-cyan);">
+                            Saturday_Night_Boost_v2
+                        </div>
+
+                        <div class="section-title">Parameter Inputs</div>
+
+                        <div class="control-group">
+                            <div class="control-label">
+                                <span>Global RTP Adjustment</span>
+                                <span id="valRTP" style="color:var(--accent-cyan)">96.5%</span>
+                            </div>
+                            <input type="range" class="range-slider" min="90" max="99" step="0.5" value="96.5"
+                                oninput="document.getElementById('valRTP').innerText = this.value + '%'">
+                            <div
+                                style="display:flex; justify-content:space-between; font-size:0.7rem; color:var(--text-muted); margin-top:4px;">
+                                <span>90%</span><span>99%</span>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <div class="control-label">
+                                <span>Retention Bonus Freq.</span>
+                                <span id="valBonus" style="color:var(--accent-purple)">HIGH_VELOCITY</span>
+                            </div>
+                            <!-- Discrete Slider -->
+                            <input type="range" class="range-slider" min="1" max="4" step="1" value="3"
+                                oninput="updateBonusLabel(this.value)">
+                            <div
+                                style="display:flex; justify-content:space-between; font-size:0.7rem; color:var(--text-muted); margin-top:4px;">
+                                <span>LOW</span><span>EXTREME</span>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <div class="control-label">
+                                <span>Min Bet Threshold</span>
+                                <span id="valBet" style="color:white">$25.00</span>
+                            </div>
+                            <input type="range" class="range-slider" min="5" max="100" step="5" value="25"
+                                oninput="document.getElementById('valBet').innerText = '$' + Number(this.value).toFixed(2)">
+                        </div>
+
+                    </div>
+
+                    <!-- Right Col: Action -->
+                    <div style="display:flex; flex-direction:column; justify-content:center;">
+                        <button class="run-sim-btn" onclick="runSimulation()">
+                            <span style="margin-right:8px">⚙</span> Initialize Simulation
+                        </button>
+                        <div style="margin-top:1rem; font-size:0.8rem; color:var(--text-muted); text-align:center;">
+                            Runs Monte Carlo sim on Oracle 26ai
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results -->
+                <div class="sim-results" id="simResults" style="opacity:0.3; pointer-events:none;">
+                    <div style="font-size:0.9rem; font-weight:700; margin-bottom:1rem; color:var(--accent-cyan)">
+                        PROJECTION_HOLOGRAM <span style="font-size:0.7rem; opacity:0.6; float:right">V.1.0.4</span>
+                    </div>
+
+                    <div class="hologram-chart">
+                        <canvas id="simChart"></canvas>
+                    </div>
+
+                    <div class="result-metrics">
+                        <div class="metric-box">
+                            <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase">Projected
+                                Lift</div>
+                            <div class="metric-val" style="color:var(--accent-emerald)" id="resLift">--</div>
+                        </div>
+                        <div class="metric-box">
+                            <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase">Risk Factor
+                            </div>
+                            <div class="metric-val" style="color:var(--accent-amber)" id="resRisk">--</div>
+                        </div>
+                        <div class="metric-box">
+                            <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase">Vol. Impact
+                            </div>
+                            <div class="metric-val" style="color:var(--accent-blue); font-size:1.4rem" id="resVol">--
+                            </div>
+                        </div>
+                        <div class="metric-box">
+                            <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase">Margin
+                                Impact</div>
+                            <div class="metric-val" style="color:var(--accent-rose); font-size:1.4rem" id="resMargin">--
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ================================================================================== -->
+        <!-- VIEW: SPECTRO (Player Intelligence Dossier) -->
+        <!-- ================================================================================== -->
+        <section id="viewSpectro" class="view-section" style="display:none; animation: fadeIn 0.4s ease-out;">
+
+            <!-- Profile Header -->
+            <div class="spectro-header">
+                <div class="spectro-profile-lockup">
+                    <div class="hexagon-wrapper">
+                        <div class="hexagon-image" id="spAvatar"></div>
+                        <div class="online-indicator"></div>
+                    </div>
+                    <div class="profile-details">
+                        <h1 id="spName">ALEXEI VOLKOV</h1>
+                        <div class="profile-meta">
+                            <span class="tier-badge" id="spTier">OBSIDIAN TIER</span>
+                            <span class="id-badge" id="spId">#8821-X9</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-actions" style="display:flex; gap:12px; align-items:center;">
+                    <div class="search-box-sm">
+                        <span class="icon">🔍</span>
+                        <input type="text" id="spSearchInput" placeholder="Enter Player ID (e.g. SPR-0001)..."
+                            onkeydown="if(event.key==='Enter') loadSpectroData(this.value)">
+                    </div>
+                    <button class="btn-icon" onclick="loadSpectroData(document.getElementById('spSearchInput').value)">
+                        <span style="font-size:1.2rem">➤</span>
+                    </button>
+                    <!-- <button class="btn-secondary">Export PDF</button> -->
+                </div>
+            </div>
+
+            <!-- Financial Snapshot -->
+            <div class="spectro-grid">
+                <div class="dossier-card financial-card">
+                    <div class="card-header">
+                        <h3>FINANCIAL SNAPSHOT</h3>
+                        <span class="trend-icon">↗</span>
+                    </div>
+                    <div class="fin-split">
+                        <div class="fin-metric">
+                            <label>TOTAL GGR CONTRIBUTION</label>
+                            <div class="value-large" id="spGGR">$2.4M</div>
+                            <div class="sub-metric increase" id="spTrend">
+                                ↗ +12% vs L30D
+                            </div>
+                        </div>
+                        <div class="fin-metric">
+                            <label>WIN/LOSS RATIO</label>
+                            <div class="value-large">
+                                <span id="spWin">42</span><span class="text-muted">/</span><span id="spLoss">58</span>
+                            </div>
+                            <div class="ratio-bar">
+                                <div class="ratio-win" id="barWin" style="width: 42%"></div>
+                                <div class="ratio-loss" id="barLoss" style="width: 58%"></div>
+                            </div>
+                            <div class="ratio-labels">
+                                <span>WIN</span>
+                                <span>LOSS</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Host Intel -->
+                <div class="dossier-card intel-card">
+                    <div class="card-header">
+                        <h3>HOST INTEL</h3>
+                    </div>
+                    <div class="intel-content">
+                        <div class="staff-notes-header">
+                            <span>STAFF NOTES</span>
+                            <button class="btn-xs btn-outline">+ ADD NOTE</button>
+                        </div>
+                        <div class="notes-list" id="spNotes">
+                            <!-- Populated via JS -->
+                            <div class="note-item">
+                                <p>"Prefers quiet tables in the North Wing. Avoid seating near bachelor parties."</p>
+                                <div class="note-meta">Added by: Sarah J. <span class="time">2h ago</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Session History Deep Dive -->
+            <div class="dossier-card session-history-card">
+                <div class="card-header">
+                    <h3>DEEP-DIVE SESSION HISTORY</h3>
+                    <div class="search-box-sm">
+                        <span class="icon">🔍</span>
+                        <input type="text" placeholder="Search logs...">
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="spectro-table">
+                        <thead>
+                            <tr>
+                                <th>TIMESTAMP</th>
+                                <th>GAME / ACTIVITY</th>
+                                <th>SATSUMA (AGGRESSION)</th>
+                                <th>VARIANCE</th>
+                                <th>WAGER / PAYOUT</th>
+                            </tr>
+                        </thead>
+                        <tbody id="spSessions">
+                            <!-- Populated JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Executive Actions Footer -->
+            <div class="spectro-footer">
+                <div class="retention-module">
+                    <label>RETENTION HEALTH PREDICTION</label>
+                    <div class="health-indicator">
+                        <div class="health-bar-track">
+                            <div class="health-bar-fill" id="spHealthBar" style="width: 85%"></div>
+                        </div>
+                        <span class="health-score" id="spHealthScore">85/100</span>
+                    </div>
+                    <div class="health-status" id="spHealthStatus">STABLE</div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn-action btn-freeze" onclick="toggleFreeze()">❄ FREEZE ACCOUNT</button>
+                    <button class="btn-action btn-vip" onclick="toggleVIP()">★ TOGGLE VIP STATUS</button>
+                    <button class="btn-action btn-message">✉ MESSAGE HOST</button>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- INTERVENTION NEXUS VIEW -->
+        <div id="viewInterventionNexus" class="nexus-container">
+            <div class="nexus-header">
+                <div style="font-size:1.5rem; font-weight:800; letter-spacing:1px">
+                    INTERVENTION <span style="color:var(--accent-rose)">NEXUS</span>
+                </div>
+                <div style="font-size:0.8rem; color:var(--accent-cyan); display:flex; align-items:center; gap:8px">
+                    <span
+                        style="display:inline-block; width:8px; height:8px; background:var(--accent-cyan); border-radius:50%; box-shadow:0 0 5px var(--accent-cyan)"></span>
+                    SYSTEMS ONLINE
+                </div>
+            </div>
+
+            <div
+                style="display:flex; align-items:center; gap:10px; margin-bottom:1rem; color:var(--accent-cyan); font-weight:700; font-size:0.9rem;">
+                <span style="font-size:1.2rem">⚡</span> AUTOMATED PROTOCOLS
+                <span style="margin-left:auto; font-size:0.7rem; color:var(--text-muted); font-weight:400">3
+                    ACTIVE</span>
+            </div>
+
+            <!-- Protocol 1 -->
+            <div class="protocol-card active" id="card_vip_boost">
+                <div style="display:flex; align-items:center; flex:1">
+                    <div class="protocol-icon-box">💎</div>
+                    <div>
+                        <div style="font-weight:700; font-size:1rem; margin-bottom:4px; color:#fff">VIP RETENTION BOOST
+                        </div>
+                        <div style="font-size:0.75rem; color:var(--text-muted)">AUTO-COMP > $5k LOSS</div>
+
+                        <!-- Mini progress bar decoration -->
+                        <div
+                            style="margin-top:8px; width:150px; height:4px; background:#333; border-radius:2px; overflow:hidden">
+                            <div
+                                style="width:45%; height:100%; background:var(--accent-cyan); box-shadow:0 0 5px var(--accent-cyan)">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="control-group" style="margin-left:auto; width:150px">
+                    <div
+                        style="display:flex; justify-content:space-between; font-size:0.7rem; color:var(--text-muted); margin-bottom:4px">
+                        <span>Boost Level</span>
+                        <span id="disp_vip_boost" style="color:var(--accent-cyan)">5</span>
+                    </div>
+                    <input type="range" class="range-slider" min="1" max="10" step="1" value="5"
+                        oninput="updateProtocol('vip_boost', this.value)">
+                </div>
+            </div>
+
+            <!-- Protocol 2 -->
+            <div class="protocol-card active" id="card_aml_lock">
+                <div style="display:flex; align-items:center; flex:1">
+                    <div class="protocol-icon-box" style="color:var(--accent-purple)">🛡️</div>
+                    <div>
+                        <div style="font-weight:700; font-size:1rem; margin-bottom:4px; color:#fff">ANTI-LAUNDERING LOCK
+                        </div>
+                        <div style="font-size:0.75rem; color:var(--text-muted)">RAPID LOW-VAR BETS</div>
+                        <div
+                            style="margin-top:6px; display:inline-block; background:rgba(244,63,94,0.2); color:var(--accent-rose); font-size:0.65rem; padding:2px 6px; border-radius:2px; border:1px solid rgba(244,63,94,0.4)">
+                            HIGH SENSITIVITY
+                        </div>
+                    </div>
+                </div>
+                <label class="switch-toggle">
+                    <input type="checkbox" checked onchange="toggleProtocol('aml_lock', this.checked)">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Protocol 3 -->
+            <div class="protocol-card" id="card_heat_adjust">
+                <div style="display:flex; align-items:center; flex:1">
+                    <div class="protocol-icon-box">🎲</div>
+                    <div>
+                        <div style="font-weight:700; font-size:1rem; margin-bottom:4px; color:var(--text-muted)">TABLE
+                            HEAT ADJUST</div>
+                        <div style="font-size:0.75rem; color:var(--text-muted)">WIN RATE > 60%</div>
+                    </div>
+                </div>
+                <label class="switch-toggle">
+                    <input type="checkbox" onchange="toggleProtocol('heat_adjust', this.checked)">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- DANGER ZONE -->
+            <div style="text-align:center; position:relative; margin-top:2rem;">
+                <div
+                    style="height:1px; background:linear-gradient(90deg, transparent, var(--accent-rose), transparent); position:absolute; top:50%; width:100%; z-index:0">
+                </div>
+                <span class="danger-zone-title" style="position:relative; z-index:1; background:#0a0e1a">DANGER
+                    ZONE</span>
+            </div>
+
+            <div
+                style="display:flex; align-items:center; gap:10px; margin-bottom:1rem; color:var(--accent-rose); font-weight:700; font-size:0.9rem;">
+                <span style="font-size:1.2rem">⚠️</span> MANUAL OVERRIDE
+            </div>
+
+            <!-- Action 1 -->
+            <div class="protocol-card" style="border-color:rgba(255,255,255,0.1); padding:1rem">
+                <div style="flex:1">
+                    <div style="font-weight:700;color:#fff">CLEAR ACTIVE BONUSES</div>
+                    <div style="font-size:0.75rem; color:var(--accent-cyan)">SCOPE: FLOOR WIDE</div>
+                </div>
+                <button class="btn-glass" onclick="executeOverride('CLEAR_BONUSES')"
+                    style="color:var(--accent-cyan); border-color:var(--accent-cyan)">
+                    <span style="font-size:1.2rem">🗑️</span>
+                </button>
+            </div>
+
+            <!-- Action 2 (Slide to Execute) -->
+            <div class="protocol-card hazard-stripe" style="display:block; border-color:var(--accent-rose)">
+                <div style="margin-bottom:1rem;">
+                    <div style="font-weight:800; color:var(--accent-rose); font-size:1.1rem; text-transform:uppercase">
+                        FREEZE ALL WHALES</div>
+                    <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px; line-height:1.4">
+                        <span
+                            style="background:var(--accent-rose); color:#000; font-weight:700; padding:1px 4px; border-radius:2px; margin-right:6px">WARNING</span>
+                        Halts all active sessions with > $100k balance immediately. Requires admin authorization code
+                        post-trigger.
+                    </div>
+                </div>
+
+                <div class="slide-container" id="slideTrack">
+                    <div class="slide-track">SLIDE TO EXECUTE</div>
+                    <div class="slide-thumb" id="slideThumb">»</div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- BOTTOM NAV DOCK -->
+    <div class="nav-dock">
+        <div class="nav-item active" onclick="switchView('Command')">
+            <span class="nav-icon">🧭</span>
+            <span>Command</span>
+        </div>
+        <div class="nav-item spectro-nav" onclick="switchView('Spectro')">
+            <span class="nav-icon">👁</span>
+            <span>Spectro</span>
+        </div>
+        <div class="nav-item" onclick="switchView('Forge')">
+            <span class="nav-icon">⚡</span>
+            <span>Forge</span>
+        </div>
+        <div class="nav-item" onclick="switchView('Nexus')">
+            <span class="nav-icon">⚠️</span>
+            <span>Nexus</span>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>SeerPlay Intelligence Hub v3.0 · Powered by <a href="#">Oracle Database 26ai</a> + Ollama</p>
+        <p style="margin-top:4px">AI Vector Search · JSON-Relational Duality · Property Graph · Select AI · OML</p>
+    </footer>
+
+    <script>
+        // ---- Utilities ----
+        const API = '';
+
+        function fmt(n) {
+            if (n === null || n === undefined) return '—';
+            if (typeof n === 'number') return n.toLocaleString('en-US', { maximumFractionDigits: 2 });
+            return n;
+        }
+
+        function setLoading(elemId) {
+            document.getElementById(elemId).innerHTML = '<div class="results-placeholder"><div class="spinner"></div>&nbsp; Loading...</div>';
+        }
+
+        // ---- Load Stats ----
+        async function loadStats() {
+            try {
+                const r = await fetch(`${API}/api/stats`);
+                const d = await r.json();
+                document.getElementById('statPlayers').textContent = fmt(d.total_players);
+                document.getElementById('statSessions').textContent = fmt(d.total_sessions);
+                document.getElementById('statEvents').textContent = fmt(d.total_events);
+                document.getElementById('statBets').textContent = '$' + fmt(d.total_bets);
+                document.getElementById('statWins').textContent = '$' + fmt(d.total_wins);
+            } catch (e) {
+                console.error('Stats error:', e);
+            }
+        }
+
+        // ---- Health Check ----
+        async function checkHealth() {
+            try {
+                const r = await fetch(`${API}/api/health`);
+                const d = await r.json();
+                const ok = d.oracle === 'connected';
+                document.getElementById('statusDot').style.background = ok ? 'var(--accent-emerald)' : 'var(--accent-rose)';
+                document.getElementById('statusDot').style.boxShadow = ok ? '0 0 8px var(--accent-emerald)' : '0 0 8px var(--accent-rose)';
+                document.getElementById('statusText').textContent = ok ? `Oracle Connected · Ollama ${d.ollama}` : `Oracle: ${d.oracle}`;
+            } catch (e) {
+                document.getElementById('statusDot').style.background = 'var(--accent-rose)';
+                document.getElementById('statusText').textContent = 'Disconnected';
+            }
+        }
+
+        // ---- Use Case A: Vector Search ----
+        async function runVectorSearch() {
+            setLoading('vsResults');
+            const persona = document.getElementById('vsPersona').value;
+            const limit = parseInt(document.getElementById('vsLimit').value) || 5;
+            try {
+                const r = await fetch(`${API}/api/vector-search`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ persona, limit })
+                });
+                const d = await r.json();
+                renderVectorResults(d);
+            } catch (e) {
+                document.getElementById('vsResults').innerHTML = `<div class="results-placeholder" style="color:var(--accent-rose)">Error: ${e.message}</div>`;
+            }
+        }
+
+        async function runVectorSearchById() {
+            const pid = document.getElementById('vsPlayerId').value.trim();
+            if (!pid) return;
+            setLoading('vsResults');
+            const limit = parseInt(document.getElementById('vsLimit').value) || 5;
+            try {
+                const r = await fetch(`${API}/api/vector-search`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ player_id: pid, limit })
+                });
+                const d = await r.json();
+                renderVectorResults(d);
+            } catch (e) {
+                document.getElementById('vsResults').innerHTML = `<div class="results-placeholder" style="color:var(--accent-rose)">Error: ${e.message}</div>`;
+            }
+        }
+
+        function renderVectorResults(d) {
+            const el = document.getElementById('vsResults');
+            if (d.detail) { el.innerHTML = `<div class="results-placeholder" style="color:var(--accent-rose)">${d.detail}</div>`; return; }
+            const matches = d.matches || d.top_matches || [];
+            let html = `<div style="margin-bottom:8px;font-size:0.75rem;color:var(--text-muted)">Reference: ${d.reference || d.target} · ${matches.length} results</div>`;
+            matches.forEach((m, i) => {
+                html += `<div class="result-row">
+            <div>
+                <span class="result-player">#${i + 1} ${m.player_id}</span>
+                ${m.username ? `<span style="color:var(--text-muted);font-size:0.78rem;margin-left:6px">@${m.username}</span>` : ''}
+            </div>
+            <div class="result-meta">
+                <span class="persona-badge persona-${m.persona}">${m.persona}</span>
+                <span>LTV $${fmt(m.ltv)}</span>
+                <span>Dist: ${m.distance?.toFixed(4) || '—'}</span>
+            </div>
+        </div>`;
+            });
+            el.innerHTML = html;
+        }
+
+        // ---- Use Case B: What-If ----
+        async function runWhatIf() {
+            setLoading('wiResults');
+            const persona = document.getElementById('wiPersona').value || undefined;
+            const breakMin = parseInt(document.getElementById('wiBreak').value) || 10;
+            try {
+                const r = await fetch(`${API}/api/what-if`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ persona, break_minutes: breakMin })
+                });
+                const d = await r.json();
+                renderWhatIfResults(d);
+            } catch (e) {
+                document.getElementById('wiResults').innerHTML = `<div class="results-placeholder" style="color:var(--accent-rose)">Error: ${e.message}</div>`;
+            }
+        }
+
+        function renderWhatIfResults(d) {
+            const el = document.getElementById('wiResults');
+            if (d.detail) { el.innerHTML = `<div class="results-placeholder" style="color:var(--accent-rose)">${d.detail}</div>`; return; }
+            const p = d.prediction;
+            const deltaColor = p.ltv_delta >= 0 ? 'var(--accent-emerald)' : 'var(--accent-rose)';
+            el.innerHTML = `<div class="whatif-result">
+        <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:4px">
+            Model: ${d.model} · R²: ${d.r_squared?.toFixed(4)} · ${d.affected_players} players · ${d.intervention}
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+            <div class="whatif-card baseline">
+                <div class="whatif-label">Baseline LTV</div>
+                <div class="whatif-value">$${fmt(p.ltv_baseline)}</div>
+            </div>
+            <div class="whatif-card intervention">
+                <div class="whatif-label">With Intervention</div>
+                <div class="whatif-value" style="color:var(--accent-purple)">$${fmt(p.ltv_with_intervention)}</div>
+            </div>
+            <div class="whatif-card delta">
+                <div class="whatif-label">Delta</div>
+                <div class="whatif-value" style="color:${deltaColor}">
+                    ${p.ltv_delta >= 0 ? '+' : ''}$${fmt(p.ltv_delta)}
+                    <span style="font-size:0.8rem">(${p.ltv_delta_pct >= 0 ? '+' : ''}${p.ltv_delta_pct?.toFixed(1)}%)</span>
+                </div>
+            </div>
+        </div>
+        <div class="whatif-rec">${d.recommendation}</div>
+    </div>`;
+        }
+
+        // ---- Use Case C: Session Tracker ----
+        async function loadSessions() {
+            const pid = document.getElementById('dtPlayerId').value.trim();
+            if (!pid) return;
+            setLoading('dtResults');
+            try {
+                const r = await fetch(`${API}/api/sessions/${pid}`);
+                const d = await r.json();
+                renderSessions(d);
+            } catch (e) {
+                document.getElementById('dtResults').innerHTML = `<div class="results-placeholder" style="color:var(--accent-rose)">Error: ${e.message}</div>`;
+            }
+        }
+
+        function renderSessions(d) {
+            const el = document.getElementById('dtResults');
+            if (d.detail) { el.innerHTML = `<div class="results-placeholder" style="color:var(--accent-rose)">${d.detail}</div>`; return; }
+            const p = d.player;
+            let html = `<div style="margin-bottom:10px;padding:8px 12px;background:rgba(255,255,255,0.02);border-radius:8px">
+        <span class="result-player">${d.player_id}</span>
+        <span style="margin-left:8px" class="persona-badge persona-${p.persona}">${p.persona}</span>
+        <span style="margin-left:8px;font-size:0.78rem;color:var(--text-muted)">LTV: $${fmt(p.ltv)} · ${p.status}</span>
+    </div>`;
+
+            if (!d.sessions || d.sessions.length === 0) {
+                html += '<div class="results-placeholder">No sessions found</div>';
+            } else {
+                d.sessions.forEach(s => {
+                    html += `<div class="result-row">
+                <div>
+                    <span style="font-weight:600;color:var(--accent-cyan)">Session #${s._id || s.sessionId}</span>
+                    <span style="margin-left:8px;font-size:0.75rem;color:var(--text-muted)">${s.gameType || '—'} · ${s.device || '—'}</span>
+                </div>
+                <div class="result-meta">
+                    <span>Bets: $${fmt(s.totalBets)}</span>
+                    <span style="color:var(--accent-emerald)">Wins: $${fmt(s.totalWins)}</span>
+                    <span style="color:var(--accent-rose)">Loss: $${fmt(s.totalLosses)}</span>
+                </div>
+            </div>`;
+                });
+            }
+            el.innerHTML = html;
+        }
+
+        // ---- Ask Hub (Text-to-SQL) ----
+        async function askHub() {
+            const q = document.getElementById('askQuestion').value.trim();
+            if (!q) return;
+            const sqlEl = document.getElementById('askSql');
+            const resEl = document.getElementById('askResults');
+            sqlEl.style.display = 'block';
+            sqlEl.textContent = 'Generating SQL...';
+            resEl.style.display = 'block';
+            resEl.innerHTML = '<div class="results-placeholder"><div class="spinner"></div>&nbsp; Thinking...</div>';
+
+            try {
+                const r = await fetch(`${API}/api/ask`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question: q })
+                });
+                const d = await r.json();
+                sqlEl.textContent = d.generated_sql || 'No SQL generated';
+
+                if (d.error) {
+                    resEl.innerHTML = `<div class="results-placeholder" style="color:var(--accent-rose)">${d.error}</div>`;
+                } else if (d.results && d.results.length > 0) {
+                    const cols = Object.keys(d.results[0]);
+                    let html = '<table class="result-table"><thead><tr>';
+                    cols.forEach(c => html += `<th>${c}</th>`);
+                    html += '</tr></thead><tbody>';
+                    d.results.forEach(row => {
+                        html += '<tr>';
+                        cols.forEach(c => html += `<td>${row[c]}</td>`);
+                        html += '</tr>';
+                    });
+                    html += '</tbody></table>';
+                    resEl.innerHTML = html;
+                } else {
+                    resEl.innerHTML = '<div class="results-placeholder">No results returned</div>';
+                }
+            } catch (e) {
+                sqlEl.textContent = 'Error';
+                resEl.innerHTML = `<div class="results-placeholder" style="color:var(--accent-rose)">Error: ${e.message}</div>`;
+            }
+        }
+
+        // ---- Use Case D: Property Graph ----
+        // ---- Use Case D: Property Graph ----
+        const THEME = {
+            cyan: '#00f0ff',
+            magenta: '#ff003c',
+            blue: '#2d6cdf',
+            purple: '#bd00ff',
+            emerald: '#0aff99',
+            amber: '#ffcc00',
+            text: '#e0e6ed',
+            muted: '#94a3b8',
+            card: 'rgba(10, 15, 25, 0.65)',
+            nodeBorder: 'rgba(0, 240, 255, 0.3)',
+            edgeLabelBg: 'rgba(2, 4, 8, 0.9)'
+        };
+
+        const PERSONA_COLORS = { 'VIP': THEME.amber, 'Casual': THEME.cyan, 'High-Churn': THEME.magenta };
+        const VIS_OPTIONS = {
+            physics: {
+                stabilization: { iterations: 80 },
+                barnesHut: { gravitationalConstant: -3000, springLength: 150, springConstant: 0.04, damping: 0.25 }
+            },
+            interaction: { hover: true, tooltipDelay: 100, zoomView: true, dragView: true },
+            edges: {
+                smooth: { type: 'continuous' },
+                font: { color: THEME.muted, size: 10, strokeWidth: 0, align: 'middle', background: THEME.edgeLabelBg },
+                width: 1.5, selectionWidth: 3,
+                color: { color: THEME.nodeBorder, highlight: THEME.cyan }
+            },
+            nodes: {
+                font: { color: THEME.text, size: 11, face: 'Inter, sans-serif' },
+                borderWidth: 2, borderWidthSelected: 3,
+                shadow: { enabled: true, color: 'rgba(0,0,0,0.5)', size: 8 }
+            }
+        };
+
+        function switchGraphTab(tab) {
+            document.querySelectorAll('.graph-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.graph-content').forEach(c => c.classList.remove('active'));
+            const tabMap = { fraud: 'graphFraud', influence: 'graphInfluence', risk: 'graphRisk' };
+            document.getElementById(tabMap[tab]).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function makePlayerNode(id, opts = {}) {
+            return {
+                id, label: id,
+                shape: 'dot', size: opts.size || 18,
+                color: { background: opts.color || THEME.blue, border: opts.border || THEME.nodeBorder, highlight: { background: opts.color || THEME.blue, border: '#fff' } },
+                title: opts.title || id, ...opts.extra
+            };
+        }
+
+        function renderVisGraph(containerId, nodes, edges) {
+            const container = document.getElementById(containerId);
+            container.style.display = 'block';
+            const data = { nodes: new vis.DataSet(nodes), edges: new vis.DataSet(edges) };
+            return new vis.Network(container, data, VIS_OPTIONS);
+        }
+
+        // ---- Fraud Scan ----
+        async function runFraudScan() {
+            const pid = document.getElementById('gfPlayerId').value.trim();
+            if (!pid) return;
+            setLoading('gfResults');
+            document.getElementById('gfCanvas').style.display = 'none';
+            document.getElementById('gfLegend').style.display = 'none';
+            try {
+                const r = await fetch(`${API}/api/graph/fraud-scan`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ player_id: pid })
+                });
+                const d = await r.json();
+                if (d.detail) { document.getElementById('gfResults').innerHTML = `<div class="results-placeholder" style="color:var(--accent-rose)">${d.detail}</div>`; return; }
+
+                // Build graph
+                const nodes = [];
+                const edges = [];
+                const addedNodes = new Set();
+                const addedDevices = new Set();
+                const addedIPs = new Set();
+
+                // Target player (large, magenta)
+                nodes.push(makePlayerNode(pid, { size: 30, color: THEME.magenta, border: '#fff', title: `${pid} (Target)` }));
+                addedNodes.add(pid);
+
+                // Limit to top 15 most suspicious per link type for readability
+                const topDeviceLinks = d.device_links.slice(0, 15);
+                const topIpLinks = d.ip_links.slice(0, 15);
+
+                topDeviceLinks.forEach(l => {
+                    if (!addedNodes.has(l.player_id)) {
+                        nodes.push(makePlayerNode(l.player_id, { color: PERSONA_COLORS[l.persona] || THEME.blue, title: `${l.player_id}\n${l.persona} · LTV $${fmt(l.ltv)}` }));
+                        addedNodes.add(l.player_id);
+                    }
+                    if (!addedDevices.has(l.shared_device)) {
+                        nodes.push({ id: l.shared_device, label: l.shared_device, shape: 'square', size: 14, color: { background: THEME.muted, border: THEME.nodeBorder }, title: `${l.shared_device}\n${l.device_type}`, font: { size: 9, color: THEME.muted } });
+                        addedDevices.add(l.shared_device);
+                    }
+                    edges.push({ from: l.player_id, to: l.shared_device, color: { color: THEME.emerald, opacity: 0.6 }, label: 'uses', arrows: 'to' });
+                });
+                // Connect target to devices too
+                addedDevices.forEach(dev => {
+                    edges.push({ from: pid, to: dev, color: { color: THEME.emerald, opacity: 0.8 }, label: 'uses', arrows: 'to', width: 2.5 });
+                });
+
+                topIpLinks.forEach(l => {
+                    if (!addedNodes.has(l.player_id)) {
+                        nodes.push(makePlayerNode(l.player_id, { color: PERSONA_COLORS[l.persona] || THEME.blue, title: `${l.player_id}\n${l.persona} · LTV $${fmt(l.ltv)}` }));
+                        addedNodes.add(l.player_id);
+                    }
+                    if (!addedIPs.has(l.shared_ip)) {
+                        nodes.push({ id: l.shared_ip, label: l.ip_address, shape: 'diamond', size: 14, color: { background: THEME.cyan, border: THEME.nodeBorder }, title: `${l.shared_ip}\n${l.ip_address} · ${l.country}`, font: { size: 9, color: THEME.cyan } });
+                        addedIPs.add(l.shared_ip);
+                    }
+                    edges.push({ from: l.player_id, to: l.shared_ip, color: { color: THEME.amber, opacity: 0.6 }, label: 'logs from', arrows: 'to' });
+                });
+                addedIPs.forEach(ip => {
+                    edges.push({ from: pid, to: ip, color: { color: THEME.amber, opacity: 0.8 }, label: 'logs from', arrows: 'to', width: 2.5 });
+                });
+
+                document.getElementById('gfLegend').style.display = 'flex';
+                if (nodes.length > 1) renderVisGraph('gfCanvas', nodes, edges);
+
+                // Summary + list below
+                let html = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+            <span class="result-player">${d.target_player}</span>
+            <span class="risk-badge risk-${d.risk_level}">${d.risk_level}</span>
+            <span style="font-size:0.78rem;color:var(--text-muted)">${d.total_linked_accounts} linked accounts</span>
+        </div>`;
+                if (d.device_links.length === 0 && d.ip_links.length === 0) {
+                    html += '<div class="results-placeholder">No shared devices or IPs found — player appears clean</div>';
+                } else {
+                    // Shared Devices Table
+                    if (d.device_links.length > 0) {
+                        html += '<div style="margin-top:16px;font-weight:600;font-size:0.8rem;color:var(--text-bright);border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:4px;margin-bottom:8px">Shared Devices (' + d.device_links.length + ')</div>';
+                        d.device_links.forEach(l => {
+                            html += `<div class="result-row">
+                                <div>
+                                    <span class="persona-badge persona-${l.persona}">${l.persona}</span>
+                                    <span style="font-weight:600;margin-left:8px;color:var(--accent-blue)">${l.player_id}</span>
+                                    <span style="font-size:0.75rem;color:var(--text-muted);margin-left:8px">via <span style="font-family:monospace;background:rgba(255,255,255,0.1);padding:2px 4px;border-radius:4px">${l.shared_device}</span></span>
+                                </div>
+                                <div class="result-meta">
+                                    <span>LTV: $${fmt(l.ltv)}</span>
+                                    <span style="color:var(--accent-rose)">${l.fraud_risk} Risk</span>
+                                </div>
+                            </div>`;
+                        });
+                    }
+                    // Shared IPs Table
+                    if (d.ip_links.length > 0) {
+                        html += '<div style="margin-top:16px;font-weight:600;font-size:0.8rem;color:var(--text-bright);border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:4px;margin-bottom:8px">Shared IPs (' + d.ip_links.length + ')</div>';
+                        d.ip_links.forEach(l => {
+                            html += `<div class="result-row">
+                                <div>
+                                    <span class="persona-badge persona-${l.persona}">${l.persona}</span>
+                                    <span style="font-weight:600;margin-left:8px;color:var(--accent-cyan)">${l.player_id}</span>
+                                    <span style="font-size:0.75rem;color:var(--text-muted);margin-left:8px">from <span style="font-family:monospace;background:rgba(6,182,212,0.1);color:var(--accent-cyan);padding:2px 4px;border-radius:4px">${l.shared_ip}</span></span>
+                                </div>
+                                <div class="result-meta">
+                                    <span>LTV: $${fmt(l.ltv)}</span>
+                                    <span>${l.country}</span>
+                                </div>
+                            </div>`;
+                        });
+                    }
+                }
+                document.getElementById('gfResults').innerHTML = html;
+            } catch (e) {
+                document.getElementById('gfResults').innerHTML = `<div class="results-placeholder" style="color:var(--accent-rose)">Error: ${e.message}</div>`;
+            }
+        }
+
+        // ---- Influence Network ----
+        async function runInfluence() {
+            const pid = document.getElementById('giPlayerId').value.trim();
+            if (!pid) return;
+            setLoading('giResults');
+            document.getElementById('giCanvas').style.display = 'none';
+            document.getElementById('giLegend').style.display = 'none';
+            try {
+                const r = await fetch(`${API}/api/graph/influence`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ player_id: pid })
+                });
+                const d = await r.json();
+                if (d.detail) { document.getElementById('giResults').innerHTML = `<div class="results-placeholder" style="color:var(--accent-rose)">${d.detail}</div>`; return; }
+
+                const nodes = [];
+                const edges = [];
+                const addedNodes = new Set();
+
+                // Target (large, cyan)
+                nodes.push(makePlayerNode(pid, { size: 30, color: THEME.cyan, border: '#fff', title: `${pid} (You)` }));
+                addedNodes.add(pid);
+
+                // Referred by (purple, arrow INTO target)
+                d.referred_by.forEach(ref => {
+                    if (!addedNodes.has(ref.player_id)) {
+                        nodes.push(makePlayerNode(ref.player_id, { size: 22, color: THEME.purple, title: `${ref.player_id}\n${ref.persona} (Referrer)` }));
+                        addedNodes.add(ref.player_id);
+                    }
+                    edges.push({ from: ref.player_id, to: pid, label: 'referred', arrows: 'to', color: { color: THEME.purple, opacity: 0.7 }, width: 2.5 });
+                });
+
+                // Direct referrals (blue)
+                d.direct_referrals.forEach(ref => {
+                    if (!addedNodes.has(ref.player_id)) {
+                        nodes.push(makePlayerNode(ref.player_id, { size: 18, color: THEME.blue, title: `${ref.player_id}\n${ref.persona} · LTV $${fmt(ref.ltv)}\nReferred ${ref.referral_date}` }));
+                        addedNodes.add(ref.player_id);
+                    }
+                    edges.push({ from: pid, to: ref.player_id, label: 'referred', arrows: 'to', color: { color: THEME.emerald, opacity: 0.7 }, width: 2 });
+                });
+
+                // Indirect referrals (grey, connects via intermediate)
+                d.indirect_referrals.forEach(ref => {
+                    if (!addedNodes.has(ref.player_id)) {
+                        nodes.push(makePlayerNode(ref.player_id, { size: 14, color: THEME.muted, title: `${ref.player_id}\n${ref.persona} · LTV $${fmt(ref.ltv)}\nvia ${ref.via}` }));
+                        addedNodes.add(ref.player_id);
+                    }
+                    if (ref.via && addedNodes.has(ref.via)) {
+                        edges.push({ from: ref.via, to: ref.player_id, label: 'referred', arrows: 'to', color: { color: THEME.emerald, opacity: 0.4 }, dashes: true });
+                    }
+                });
+
+                document.getElementById('giLegend').style.display = 'flex';
+                if (nodes.length > 1) renderVisGraph('giCanvas', nodes, edges);
+
+                let html = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+            <span class="result-player">${d.player_id}</span>
+            <span style="font-size:0.85rem;font-weight:700;color:var(--accent-cyan)">Influence Score: ${d.influence_score}</span>
+            <span style="font-size:0.78rem;color:var(--text-muted)">Network LTV: $${fmt(d.network_ltv)}</span>
+        </div>`;
+                if (d.direct_referrals.length === 0 && d.referred_by.length === 0) {
+                    html += '<div class="results-placeholder">No referral connections found for this player</div>';
+                } else {
+                    if (d.referred_by.length > 0) {
+                        html += '<div style="margin-top:16px;font-weight:600;font-size:0.8rem;color:var(--text-bright);border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:4px;margin-bottom:8px">Referred By</div>';
+                        d.referred_by.forEach(ref => {
+                            html += `<div class="result-row">
+                                <div>
+                                    <span class="persona-badge persona-${ref.persona}">${ref.persona}</span>
+                                    <span style="font-weight:600;margin-left:8px;color:var(--accent-purple)">${ref.player_id}</span>
+                                </div>
+                                <div class="result-meta">
+                                    <span>Referrer</span>
+                                </div>
+                            </div>`;
+                        });
+                    }
+                    if (d.direct_referrals.length > 0) {
+                        html += '<div style="margin-top:16px;font-weight:600;font-size:0.8rem;color:var(--text-bright);border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:4px;margin-bottom:8px">Direct Referrals (' + d.direct_referrals.length + ')</div>';
+                        d.direct_referrals.forEach(ref => {
+                            html += `<div class="result-row">
+                                <div>
+                                    <span class="persona-badge persona-${ref.persona}">${ref.persona}</span>
+                                    <span style="font-weight:600;margin-left:8px;color:var(--accent-blue)">${ref.player_id}</span>
+                                    <span style="font-size:0.75rem;color:var(--text-muted);margin-left:8px">${ref.referral_date}</span>
+                                </div>
+                                <div class="result-meta">
+                                    <span>LTV: $${fmt(ref.ltv)}</span>
+                                </div>
+                            </div>`;
+                        });
+                    }
+                }
+                document.getElementById('giResults').innerHTML = html;
+            } catch (e) {
+                document.getElementById('giResults').innerHTML = `<div class="results-placeholder" style="color:var(--accent-rose)">Error: ${e.message}</div>`;
+            }
+        }
+
+        // ---- Risk Propagation ----
+        async function runRiskPropagation() {
+            const pid = document.getElementById('grPlayerId').value.trim();
+            if (!pid) return;
+            setLoading('grResults');
+            document.getElementById('grCanvas').style.display = 'none';
+            document.getElementById('grLegend').style.display = 'none';
+            try {
+                const r = await fetch(`${API}/api/graph/risk-propagation`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ player_id: pid })
+                });
+                const d = await r.json();
+                if (d.detail) { document.getElementById('grResults').innerHTML = `<div class="results-placeholder" style="color:var(--accent-rose)">${d.detail}</div>`; return; }
+
+                const nodes = [];
+                const edges = [];
+                const addedNodes = new Set();
+                const addedDevices = new Set();
+                const addedIPs = new Set();
+                const riskySet = new Set();
+                const cr = d.connected_risks;
+
+                // Collect risky player IDs
+                cr.via_device.forEach(l => riskySet.add(l.player_id));
+                cr.via_ip.forEach(l => riskySet.add(l.player_id));
+
+                // Target (large, amber/magenta)
+                const targetColor = d.own_risk_events.length > 0 ? THEME.magenta : THEME.amber;
+                nodes.push(makePlayerNode(pid, { size: 30, color: targetColor, border: '#fff', title: `${pid} (Target)\nContagion: ${d.contagion_score}/10` }));
+                addedNodes.add(pid);
+
+                cr.via_device.slice(0, 12).forEach(l => {
+                    if (!addedNodes.has(l.player_id)) {
+                        const evts = cr.risk_details[l.player_id] || [];
+                        const types = evts.map(e => e.risk_type).join(', ');
+                        nodes.push(makePlayerNode(l.player_id, { size: 20, color: THEME.magenta, title: `${l.player_id} ⚠️\n${l.persona}\nRisks: ${types}` }));
+                        addedNodes.add(l.player_id);
+                    }
+                    if (!addedDevices.has(l.via_device)) {
+                        nodes.push({ id: l.via_device, label: l.via_device, shape: 'square', size: 12, color: { background: THEME.muted, border: THEME.nodeBorder }, font: { size: 9, color: THEME.muted }, title: `${l.via_device}\n${l.device_type}` });
+                        addedDevices.add(l.via_device);
+                    }
+                    edges.push({ from: l.player_id, to: l.via_device, color: { color: THEME.magenta, opacity: 0.6 }, width: 2 });
+                });
+                addedDevices.forEach(dev => {
+                    edges.push({ from: pid, to: dev, color: { color: THEME.amber, opacity: 0.8 }, width: 2.5 });
+                });
+
+                cr.via_ip.slice(0, 12).forEach(l => {
+                    if (!addedNodes.has(l.player_id)) {
+                        const evts = cr.risk_details[l.player_id] || [];
+                        const types = evts.map(e => e.risk_type).join(', ');
+                        nodes.push(makePlayerNode(l.player_id, { size: 20, color: THEME.magenta, title: `${l.player_id} ⚠️\n${l.persona}\nRisks: ${types}` }));
+                        addedNodes.add(l.player_id);
+                    }
+                    if (!addedIPs.has(l.via_ip)) {
+                        nodes.push({ id: l.via_ip, label: l.ip_address, shape: 'diamond', size: 12, color: { background: THEME.cyan, border: THEME.nodeBorder }, font: { size: 9, color: THEME.muted }, title: `${l.via_ip}\n${l.ip_address}` });
+                        addedIPs.add(l.via_ip);
+                    }
+                    edges.push({ from: l.player_id, to: l.via_ip, color: { color: THEME.magenta, opacity: 0.6 }, width: 2 });
+                });
+                addedIPs.forEach(ip => {
+                    edges.push({ from: pid, to: ip, color: { color: THEME.amber, opacity: 0.8 }, width: 2.5 });
+                });
+
+                document.getElementById('grLegend').style.display = 'flex';
+                if (nodes.length > 1) renderVisGraph('grCanvas', nodes, edges);
+
+                let html = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+            <span class="result-player">${d.player_id}</span>
+            <span class="risk-badge risk-${d.risk_level}">${d.risk_level}</span>
+            <span style="font-size:0.85rem;font-weight:700;color:var(--accent-amber)">Contagion Score: ${d.contagion_score}/10</span>
+        </div>
+        <div class="whatif-rec" style="margin-bottom:10px;background:rgba(${d.risk_level === 'critical' ? '244,63,94' : d.risk_level === 'high' ? '245,158,11' : '16,185,129'},0.08);color:var(--accent-${d.risk_level === 'critical' ? 'rose' : d.risk_level === 'high' ? 'amber' : 'emerald'})">${d.recommendation}</div>`;
+
+                if (cr.total_risky_neighbors === 0 && d.own_risk_events.length === 0) {
+                    html += '<div class="results-placeholder">No risk signals detected — player is in a safe neighborhood</div>';
+                } else {
+                    // Own Risks
+                    if (d.own_risk_events.length > 0) {
+                        html += '<div style="margin-top:16px;font-weight:600;font-size:0.8rem;color:var(--text-bright);border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:4px;margin-bottom:8px">Own Risk Events</div>';
+                        d.own_risk_events.forEach(e => {
+                            html += `<div class="result-row">
+                                <div>
+                                    <span class="risk-badge risk-critical">${e.risk_type}</span>
+                                    <span style="font-size:0.75rem;color:var(--text-muted);margin-left:8px">${e.event_date}</span>
+                                </div>
+                                <div class="result-meta" style="color:var(--accent-rose)">
+                                    Severity: ${e.severity}
+                                </div>
+                            </div>`;
+                        });
+                    }
+                    // Neighbors
+                    if (cr.total_risky_neighbors > 0) {
+                        html += '<div style="margin-top:16px;font-weight:600;font-size:0.8rem;color:var(--text-bright);border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:4px;margin-bottom:8px">Risky Neighbors (' + cr.total_risky_neighbors + ' found)</div>';
+                        // Via Device
+                        cr.via_device.forEach(l => {
+                            const details = cr.risk_details[l.player_id] || [];
+                            const reasons = details.map(r => r.risk_type).join(', ');
+                            html += `<div class="result-row">
+                                <div>
+                                    <span class="persona-badge persona-${l.persona}">${l.persona}</span>
+                                    <span style="font-weight:600;margin-left:8px;color:var(--accent-rose)">${l.player_id}</span>
+                                    <span style="font-size:0.75rem;color:var(--text-muted);margin-left:8px">via device</span>
+                                </div>
+                                <div class="result-meta" style="color:var(--accent-amber)">
+                                    ${reasons}
+                                </div>
+                            </div>`;
+                        });
+                        // Via IP
+                        cr.via_ip.forEach(l => {
+                            const details = cr.risk_details[l.player_id] || [];
+                            const reasons = details.map(r => r.risk_type).join(', ');
+                            html += `<div class="result-row">
+                                <div>
+                                    <span class="persona-badge persona-${l.persona}">${l.persona}</span>
+                                    <span style="font-weight:600;margin-left:8px;color:var(--accent-rose)">${l.player_id}</span>
+                                    <span style="font-size:0.75rem;color:var(--text-muted);margin-left:8px">via IP</span>
+                                </div>
+                                <div class="result-meta" style="color:var(--accent-amber)">
+                                    ${reasons}
+                                </div>
+                            </div>`;
+                        });
+                    }
+                }
+                document.getElementById('grResults').innerHTML = html;
+            } catch (e) {
+                document.getElementById('grResults').innerHTML = `<div class="results-placeholder" style="color:var(--accent-rose)">Error: ${e.message}</div>`;
+            }
+        }
+
+        // Allow Enter key on Ask input
+        document.getElementById('askQuestion').addEventListener('keydown', e => {
+            if (e.key === 'Enter') askHub();
+        });
+
+        // ---- Simulation Forge ----
+
+        let simChartInstance = null;
+        const BONUS_LABELS = { 1: "LOW", 2: "MEDIUM", 3: "HIGH_VELOCITY", 4: "EXTREME" };
+
+        function updateBonusLabel(val) {
+            const label = BONUS_LABELS[val];
+            const el = document.getElementById('valBonus');
+            el.innerText = label;
+            if (val == 4) el.style.color = 'var(--accent-rose)';
+            else if (val == 3) el.style.color = 'var(--accent-purple)';
+            else el.style.color = 'var(--text-muted)';
+        }
+
+        function switchView(viewName) {
+            // Update Nav
+            document.querySelectorAll('.nav-item').forEach(el => {
+                if (el.textContent.includes(viewName)) el.classList.add('active');
+                else el.classList.remove('active');
+            });
+
+
+            const commandDeck = document.getElementById('viewCommandDeck');
+            const forge = document.getElementById('viewSimulationForge');
+            const nexus = document.getElementById('viewInterventionNexus');
+            const spectro = document.getElementById('viewSpectro');
+
+
+            // Hide all
+            if (commandDeck) commandDeck.style.display = 'none';
+            if (forge) forge.style.display = 'none';
+            if (nexus) nexus.style.display = 'none';
+            if (spectro) spectro.style.display = 'none';
+
+            if (viewName === 'Command') {
+                if (commandDeck) {
+                    commandDeck.style.display = 'block';
+                    commandDeck.style.opacity = 0;
+                    commandDeck.style.animation = 'fadeIn 0.5s forwards';
+                }
+            } else if (viewName === 'Forge') {
+                if (forge) forge.style.display = 'block';
+            } else if (viewName === 'Nexus') {
+                if (nexus) nexus.style.display = 'block';
+            } else if (viewName === 'Spectro') {
+                if (spectro) {
+                    spectro.style.display = 'block';
+                    loadSpectroData(); // Load default or current
+                }
+            }
+        }
+
+        // Add fadeIn keyframes if not exists
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        `;
+        document.head.appendChild(style);
+
+        async function runSimulation() {
+            // UI Feedback
+            const btn = document.querySelector('.run-sim-btn');
+            btn.innerHTML = '<span class="spinner"></span> Processing...';
+            document.getElementById('simScan').style.display = 'block';
+            document.getElementById('simResults').style.opacity = 0.5;
+
+            // Gather Inputs
+            const rtp = parseFloat(document.querySelector('input[oninput*="valRTP"]').value);
+            const bonusVal = parseInt(document.querySelector('input[oninput*="updateBonusLabel"]').value);
+            const bonusFreq = BONUS_LABELS[bonusVal];
+            const minBet = parseFloat(document.querySelector('input[oninput*="valBet"]').value);
+
+            try {
+                const r = await fetch(`${API}/api/simulation/run`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        global_rtp: rtp,
+                        retention_bonus_freq: bonusFreq,
+                        min_bet: minBet
+                    })
+                });
+                const d = await r.json();
+
+                // Simulate delay for effect
+                setTimeout(() => {
+                    renderSimulationResults(d);
+                    btn.innerHTML = '<span style="margin-right:8px">⚙</span> Initialize Simulation';
+                    document.getElementById('simScan').style.display = 'none';
+                    document.getElementById('simResults').style.opacity = 1;
+                    document.getElementById('simResults').style.pointerEvents = 'auto';
+                }, 800);
+
+            } catch (e) {
+                console.error(e);
+                btn.innerHTML = 'Error';
+            }
+        }
+
+        function renderSimulationResults(d) {
+            // Metrics
+            document.getElementById('resLift').innerText = (d.projected_lift >= 0 ? '+' : '') + '$' + fmt(d.projected_lift);
+            document.getElementById('resRisk').innerText = d.risk_factor;
+            document.getElementById('resVol').innerText = d.details.volume_impact;
+            document.getElementById('resMargin').innerText = d.details.margin_impact;
+
+            // Risk Color
+            const riskEl = document.getElementById('resRisk');
+            if (d.risk_factor === 'CRITICAL') riskEl.style.color = THEME.magenta;
+            else if (d.risk_factor === 'MODERATE') riskEl.style.color = THEME.amber;
+            else riskEl.style.color = THEME.emerald;
+
+            // Chart
+            const ctx = document.getElementById('simChart').getContext('2d');
+
+            if (simChartInstance) simChartInstance.destroy();
+
+            const labels = d.graph_data.map(p => p.day);
+            const dataPts = d.graph_data.map(p => p.value);
+
+            // Create gradient
+            const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, 'rgba(0, 240, 255, 0.2)'); // Cyan low opacity
+            gradient.addColorStop(1, 'rgba(0, 240, 255, 0)');
+
+            simChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Projected GGR Lift',
+                        data: dataPts,
+                        borderColor: THEME.cyan,
+                        backgroundColor: gradient,
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: THEME.bg_secondary || '#0a0f18',
+                        pointBorderColor: THEME.cyan,
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(2, 4, 8, 0.9)',
+                            titleColor: THEME.muted,
+                            bodyColor: THEME.cyan,
+                            borderColor: THEME.nodeBorder,
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function (context) {
+                                    return 'Lift: $' + context.parsed.y.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: THEME.muted, font: { size: 10 } }
+                        },
+                        y: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: {
+                                color: THEME.muted,
+                                font: { size: 10 },
+                                callback: function (value) { return '$' + value / 1000 + 'k'; }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ---- Intervention Nexus ----
+
+        function toggleProtocol(id, state) {
+            const card = document.getElementById(`card_${id}`);
+            if (state) card.classList.add('active');
+            else card.classList.remove('active');
+
+            // Call Backend
+            fetch(`${API}/api/nexus/action`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'TOGGLE_PROTOCOL', id: id, state: state })
+            }).catch(console.error);
+        }
+
+        function updateProtocol(id, value) {
+            // Update display if exists
+            const disp = document.getElementById(`disp_${id}`);
+            if (disp) disp.innerText = value;
+
+            // Call Backend
+            fetch(`${API}/api/nexus/action`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'UPDATE_PROTOCOL', id: id, value: value })
+            }).catch(console.error);
+        }
+
+        async function executeOverride(action) {
+            if (!confirm("Are you sure you want to execute this override?")) return;
+
+            try {
+                const r = await fetch(`${API}/api/nexus/action`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: action })
+                });
+                const d = await r.json();
+                alert(`SUCCESS: ${d.message}`);
+            } catch (e) {
+                alert("Error executing override");
+            }
+        }
+
+        // Slide to Unlock Logic
+        const slideThumb = document.getElementById('slideThumb');
+        const slideTrack = document.getElementById('slideTrack');
+        let isDragging = false;
+        let startX, currentX;
+        const maxSlide = 300; // Approx track width - thumb width
+
+        slideThumb.addEventListener('mousedown', startSlide);
+        document.addEventListener('mousemove', moveSlide);
+        document.addEventListener('mouseup', endSlide);
+
+        function startSlide(e) {
+            isDragging = true;
+            startX = e.clientX;
+            slideThumb.style.transition = 'none';
+        }
+
+        function moveSlide(e) {
+            if (!isDragging) return;
+            const trackRect = slideTrack.getBoundingClientRect();
+            const maxDist = trackRect.width - slideThumb.offsetWidth - 8; // padding
+
+            let delta = e.clientX - startX;
+            if (delta < 0) delta = 0;
+            if (delta > maxDist) delta = maxDist;
+
+            slideThumb.style.transform = `translateX(${delta}px)`;
+            currentX = delta;
+
+            // Trigger threshold
+            if (delta >= maxDist - 5) {
+                isDragging = false; // Stop dragging
+                triggerSlideAction();
+            }
+        }
+
+        function endSlide() {
+            if (!isDragging) return;
+            isDragging = false;
+            // Snap back
+            slideThumb.style.transition = 'transform 0.3s';
+            slideThumb.style.transform = 'translateX(0)';
+        }
+
+        function triggerSlideAction() {
+            slideThumb.style.background = '#fff';
+            slideThumb.style.color = 'var(--accent-rose)';
+            slideThumb.innerHTML = '✔';
+
+            executeOverride('FREEZE_WHALES');
+
+            // Reset after 2s
+            setTimeout(() => {
+                slideThumb.style.transition = 'transform 0.3s, background 0.3s';
+                slideThumb.style.transform = 'translateX(0)';
+                slideThumb.style.background = 'var(--accent-rose)';
+                slideThumb.style.color = '#fff';
+                slideThumb.innerHTML = '»';
+            }, 2000);
+        }
+
+
+
+
+
+
+        // ---- Spectro (Dossier) Logic ----
+
+        async function loadSpectroData(playerId) {
+            // Default to passed ID, or Search Input, or Graph Input, or Default
+            if (!playerId) {
+                playerId = document.getElementById('spSearchInput')?.value.trim() ||
+                    document.getElementById('grPlayerId')?.value.trim() ||
+                    'SPR-0001';
+            }
+
+            // Sync the search input if it's empty or different
+            const searchInput = document.getElementById('spSearchInput');
+            if (searchInput && searchInput.value !== playerId) searchInput.value = playerId;
+
+            // Set loading state if needed, or visual feedback
+            document.getElementById('spName').innerText = "Loading...";
+
+            try {
+                const r = await fetch(`${API}/api/spectro/dossier`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ player_id: playerId })
+                });
+                const d = await r.json();
+
+                if (d.error) {
+                    alert(d.error);
+                    return;
+                }
+
+                // Render Profile
+                document.getElementById('spName').innerText = d.profile.name;
+                document.getElementById('spTier').innerText = d.profile.tier;
+                document.getElementById('spId').innerText = d.profile.tier_code; // using code for ID field
+
+                // Render Financials
+                document.getElementById('spGGR').innerText = '$' + fmt(d.financials.ggr);
+                document.getElementById('spTrend').innerHTML = `↗ ${d.financials.trend_l30d} vs L30D`;
+
+                document.getElementById('spWin').innerText = d.financials.win_pct;
+                document.getElementById('spLoss').innerText = d.financials.loss_pct;
+                document.getElementById('barWin').style.width = d.financials.win_pct + '%';
+                document.getElementById('barLoss').style.width = d.financials.loss_pct + '%';
+
+                // Render Retention
+                const health = d.retention.score;
+                document.getElementById('spHealthScore').innerText = health + '/100';
+                document.getElementById('spHealthBar').style.width = health + '%';
+
+                const statusEl = document.getElementById('spHealthStatus');
+                statusEl.innerText = d.retention.status;
+                statusEl.style.color = `var(--accent-${d.retention.color})`;
+                statusEl.style.background = `rgba(${d.retention.color === 'rose' ? '244,63,94' : d.retention.color === 'amber' ? '245,158,11' : '16,185,129'}, 0.1)`;
+
+                // Render Sessions
+                const tbody = document.getElementById('spSessions');
+                let rows = '';
+                d.sessions.forEach(s => {
+                    // determine variance color
+                    let varColor = '#fff';
+                    if (s.variance === 'Extreme') varColor = 'var(--accent-rose)';
+                    if (s.variance === 'High') varColor = 'var(--accent-amber)';
+                    if (s.variance === 'Low') varColor = 'var(--accent-emerald)';
+
+                    rows += `<tr>
+                        <td>${s.timestamp}</td>
+                        <td style="color:var(--accent-cyan); font-weight:600">${s.game}</td>
+                        <td>
+                            <div style="display:flex; align-items:center; gap:8px">
+                                <div style="width:60px; height:4px; background:#333; border-radius:2px">
+                                    <div style="width:${s.aggression}%; height:100%; background:linear-gradient(90deg, var(--accent-blue), var(--accent-purple))"></div>
+                                </div>
+                                <span style="font-size:0.75rem">${s.aggression}%</span>
+                            </div>
+                        </td>
+                        <td style="color:${varColor}; font-weight:700">${s.variance}</td>
+                        <td>
+                            <span style="color:var(--text-muted)">$${fmt(s.wager)}</span> / 
+                            <span style="color:${s.payout > 0 ? 'var(--accent-emerald)' : 'var(--text-muted)'}">$${fmt(s.payout)}</span>
+                        </td>
+                    </tr>`;
+                });
+                tbody.innerHTML = rows;
+
+                // Render Notes
+                const notesContainer = document.getElementById('spNotes');
+                let notesHtml = '';
+                d.intel.forEach(n => {
+                    const borderColor = n.type === 'alert' ? 'var(--accent-rose)' : 'var(--accent-cyan)';
+                    const bg = n.type === 'alert' ? 'rgba(244,63,94,0.05)' : 'rgba(255,255,255,0.03)';
+                    const title = n.alert_type ? `<div style="color:var(--accent-rose); font-weight:800; font-size:0.7rem; margin-bottom:4px">⚠ ${n.alert_type}</div>` : '';
+
+                    notesHtml += `<div class="note-item" style="border-left-color:${borderColor}; background:${bg}">
+                        ${title}
+                        <p>${n.text}</p>
+                        <div class="note-meta">Added by: ${n.author} <span class="time">${n.time}</span></div>
+                    </div>`;
+                });
+                notesContainer.innerHTML = notesHtml;
+
+            } catch (e) {
+                console.error(e);
+                alert("Failed to load dossier");
+            }
+        }
+
+        function toggleFreeze() {
+            if (confirm("Confirm: Immediate Account Freeze for " + document.getElementById('spName').innerText + "?")) {
+                alert("Account frozen. Compliance team notified.");
+            }
+        }
+
+        function toggleVIP() {
+            alert("VIP status toggled. Benefits updated.");
+        }
+
+
+        // ---- Init ----
+        checkHealth();
+        loadStats();
+        setInterval(checkHealth, 30000);
+    </script>
+
+</body>
+
+</html>

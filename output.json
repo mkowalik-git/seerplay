@@ -1,0 +1,38 @@
+Note: Unnecessary use of -X or --request, POST is already inferred.
+* Host localhost: 8080 was resolved.
+* IPv6: : : 1
+* IPv4: 127.0.0.1
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying [
+  : : 1
+]:8080...
+* Connected to localhost (: : 1) port 8080
+> POST /api/vector-search HTTP/1.1
+> Host: localhost: 8080
+> User-Agent: curl/8.7.1
+> Accept: */*
+> Content-Type: application/json
+> Content-Length: 35
+> 
+} [35 bytes data]
+* upload completely sent off: 35 bytes
+
+100    35    0     0  100    35      0    171 --:--:-- --:--:-- --:--:--   170
+100    35    0     0  100    35      0     28  0:00:01  0:00:01 --:--:--    28
+100    35    0     0  100    35      0     15  0:00:02  0:00:02 --:--:--    15
+100    35    0     0  100    35      0     10  0:00:03  0:00:03 --:--:--    10
+100    35    0     0  100    35      0      8  0:00:04  0:00:04 --:--:--     8
+100    35    0     0  100    35      0      6  0:00:05  0:00:05 --:--:--     0
+100    35    0     0  100    35      0      5  0:00:07  0:00:06  0:00:01     0< HTTP/1.1 200 OK
+< date: Tue, 17 Feb 2026 22:19:53 GMT
+< server: uvicorn
+< content-length: 1138
+< content-type: application/json
+< 
+{ [1138 bytes data]
+
+100  1173  100  1138  100    35    174      5  0:00:07  0:00:06  0:00:01   264
+* Connection #0 to host localhost left intact
+{"reference":"VIP Centroid","limit":10,"matches":[{"player_id":"SPR-0809","persona":"VIP","ltv":13501.39,"username":"whale_809","distance":0.47959975030251945},{"player_id":"SPR-0432","persona":"VIP","ltv":26839.9,"username":"whale_432","distance":0.5090105730272501},{"player_id":"SPR-0350","persona":"VIP","ltv":26442.52,"username":"whale_350","distance":0.5219099807869536},{"player_id":"SPR-0776","persona":"VIP","ltv":49764.54,"username":"whale_776","distance":0.5257256050630921},{"player_id":"SPR-0068","persona":"VIP","ltv":33869.88,"username":"whale_68","distance":0.526439695925059},{"player_id":"SPR-0390","persona":"VIP","ltv":45211.41,"username":"whale_390","distance":0.5298937750456361},{"player_id":"SPR-0759","persona":"VIP","ltv":35386.21,"username":"whale_759","distance":0.5389295085728549},{"player_id":"SPR-0156","persona":"VIP","ltv":46407.35,"username":"whale_156","distance":0.5397641560292006},{"player_id":"SPR-0946","persona":"VIP","ltv":21343.14,"username":"whale_946","distance":0.5400923608537047},{"player_id":"SPR-0139","persona":"VIP","ltv":6467.14,"username":"whale_139","distance":0.5406680006428584}]}
