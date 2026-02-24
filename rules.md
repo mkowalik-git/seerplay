@@ -11,7 +11,7 @@ This document serves as a blueprint for recreating the **SeerPlay Intelligence H
 |---|---|---|
 | **Parent Container** | Podman (v4/v5) | The outer shell. Orchestrates the inner pod and services. |
 | **Database** | Oracle 26ai Free | Stores relational data, vectors, JSON, and graph data. |
-| **AI Brain** | Ollama (llama3) | Local LLM for Text-to-SQL generation. |
+| **AI Brain** | Ollama (gemma:2b) | Local LLM for Text-to-SQL generation. |
 | **API Backend** | Python (FastAPI) | Connects UI to DB/LLM. Serves the Dashboard. |
 | **Orchestrator** | Bash (`entrypoint.sh`) | Manages startup order, health checks, and data seeding. |
 

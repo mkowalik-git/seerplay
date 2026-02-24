@@ -1,0 +1,20 @@
+services:
+  seerplay-omni:
+    build:
+      context: .
+      dockerfile: Containerfile.parent
+    image: seerplay-omni:latest
+    container_name: seerplay-v3
+    privileged: true
+    ports:
+      - "8080:8000"
+      - "8181:8080"
+      - "1521:1521"
+    volumes:
+      - seerplay-storage:/var/lib/containers
+    environment:
+      - TMPDIR=/var/lib/containers/tmp
+
+volumes:
+  seerplay-storage:
+    name: seerplay-storage

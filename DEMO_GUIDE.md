@@ -151,7 +151,7 @@ curl -s -X POST http://localhost:8080/api/simulation/run \
 ### Use Case A: AI Vector Search
 - **Behavioral Similarity**: Converts player session behavior into **768-dimensional vectors**.
 - **Fuzzy ID Lookup**: Automatically handles short inputs (e.g., "0001" -> "SPR-0001").
-- **Semantic Search**: Uses **AI Intent Routing** (Ollama/Llama 3) to map natural language (e.g., "high rollers") to behavior archetypes (e.g., VIP Centroid).
+- **Semantic Search**: Uses **AI Intent Routing** (Ollama/Gemma 2B) to map natural language (e.g., "high rollers") to behavior archetypes (e.g., VIP Centroid).
 - Uses `VECTOR_DISTANCE(..., COSINE)` for similarity search in Oracle 26ai.
 
 ### Use Case B: Responsible Gaming What-If
@@ -165,7 +165,7 @@ curl -s -X POST http://localhost:8080/api/simulation/run \
 - `_metadata.etag` enables optimistic concurrency control
 
 ### Bonus: Text-to-SQL via Ollama (Ask the Hub)
-- **Natural Language to SQL**: Converts questions like "Count VIP players" into SQL using **llama3**.
+- **Natural Language to SQL**: Converts questions like "Count VIP players" into SQL using **gemma:2b**.
 - **Strict Data Scope**: The system prompt is restricted to **database-only** questions to prevent hallucinations.
 - **Slang Support**: Understands casino terminology like "whales" (maps to VIP/High LTV).
 - **Sarcastic Personality**: Rejects non-data questions (e.g., "Write a poem", "Tell me about physics") with witty, sarcastic refusals like *"I'm a database, not a poet."*

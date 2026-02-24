@@ -199,7 +199,7 @@ async def vector_search(request: Request):
                 
                 ollama_resp = requests.post(
                     "http://localhost:11434/api/generate",
-                    json={"model": "llama3", "prompt": prompt, "stream": False, "format": "json"},
+                    json={"model": "gemma:2b", "prompt": prompt, "stream": False, "format": "json"},
                     timeout=90
                 )
                 print(f"[VectorSearch] Ollama Status: {ollama_resp.status_code}", flush=True)
@@ -508,7 +508,7 @@ async def ask_natural_language(request: Request):
         ollama_resp = requests.post(
             f"{OLLAMA_URL}/api/generate",
             json={
-                "model": "llama3",
+                "model": "gemma:2b",
                 "prompt": f"{schema_context}\n\nQuestion: {question}\n\nSQL (or NOT_RELEVANT):",
                 "stream": False,
                 "options": {

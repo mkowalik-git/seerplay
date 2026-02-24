@@ -60,8 +60,8 @@ until curl -sf http://localhost:11434 > /dev/null 2>&1; do
     ELAPSED=$((ELAPSED + 5))
 done
 
-echo "[5/9] Pulling llama3..."
-podman exec ollama-brain ollama pull llama3 || echo "  ⚠ Model pull failed"
+echo "[5/9] Pulling gemma:2b..."
+podman exec ollama-brain ollama pull gemma:2b || echo "  ⚠ Model pull failed"
 
 # ---------------------------------------------------------------
 # 6. Wait for Oracle to be HEALTHY

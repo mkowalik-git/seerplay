@@ -16,7 +16,7 @@ Here is a quick tour of our shiny features:
 
 *   **AI Vector Search:** Why search by exact match when you can search by *vibe*? We convert player behavior into 768-dimensional vectors. Looking for "high rollers"? We map that natural language right to the behavioral centroid. 
 *   **Graph Intelligence:** Uncover hidden connections faster than a gossip columnist. Using Oracle Property Graphs, we map out referral networks (who influences whom) and scan for fraud rings sharing devices. 
-*   **Ask the Hub (Text-to-SQL):** Powered by Ollama and Llama 3, you can literally just *ask* your database questions. Try asking "Who are the whales?" and watch it translate domain slang into flawless SQL. (Warning: It *will* get sarcastic if you ask it to write poetry).
+*   **Ask the Hub (Text-to-SQL):** Powered by Ollama and Gemma 2B, you can literally just *ask* your database questions. Try asking "Who are the whales?" and watch it translate domain slang into flawless SQL. (Warning: It *will* get sarcastic if you ask it to write poetry).
 *   **JSON-Relational Duality:** We let application developers work with simple JSON documents while the database stores them relationally. It's the best of both worlds — like eating cake and simultaneously getting a six-pack.
 *   **Simulation Forge:** A drag-and-drop "what-if" builder that runs Monte Carlo simulations and linear regressions right inside the database to predict lifetime value (LTV) impacts. No data movement required.
 
